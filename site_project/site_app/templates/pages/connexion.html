@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="../static/images/log.png" type="image/x-icon">
+    <title>Connexion</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #000000;
+        }
+        .container{
+            background-color: rgba(15, 15, 15, 0.705);
+            box-shadow: 13px 13px 20px rgb(5, 209, 236);
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            width: 500px;
+            padding: 15px;
+            margin: 15px;
+            border-radius: 8px;
+        }
+        .container:hover{
+            animation: bg 1s linear infinite alternate;
+        }
+        @keyframes bg{
+            to{
+                box-shadow: -13px -13px 20px rgb(245, 245, 245);
+            }
+        }
+        .container .form{
+
+            width: 100%;
+            color: #538bac;
+            font-weight: bold;
+        }
+        .container .form form label{
+            color: #ffffff;
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            text-shadow: 5px 5px 3px #8bb5ce1a;
+            font-size: 20px;
+        }
+        .container .form form h1{
+            text-align: center;
+            margin: 30px;
+            font-weight: bold;
+            color: rgb(255, 255, 255);
+            text-shadow: 5px 5px 3px #538bacc4;
+        }
+        .container .form form input{
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+            height: 40px;
+            border-radius: 12px;
+            box-shadow: inset -6px 6px 7px rgb(0, 0, 0);
+        }
+        .container .form form button{
+            display: block;
+            border: none;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            width: 100%;
+            height: 57px;
+            border-radius: 16px;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 3px 3px 4px #fdfdfd;
+            background-color: rgba(58, 111, 128, 0.897);
+            color: #ffffff;
+            border: solid #ffffff;
+        }
+        .container .form form button:hover{
+            box-shadow: 3px 3px 4px rgb(202, 197, 197);
+            color: white;
+            background-color: #538bac;
+            color: rgb(255, 255, 255);
+            transition: 1s;
+        }
+        .image{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -2; 
+            opacity: 0.7;
+        }
+        @media(max-height:819px){
+            body{
+            min-height: 150vh;
+        }
+        .image{
+            height: 150%;
+        }
+        }
+        .image1{
+            box-shadow: inset -1px 1px 2px black; border-radius: 100%; padding: 3px; background-color: white;width:150px;height:150px;
+        }
+        .image1:hover{
+           width: 151px;
+           height: 151px;
+           box-shadow: 1px 1px 1px rgb(230, 235, 236);
+           transition: 0.1s;
+           border: solid rgb(229, 239, 243);
+        }
+    </style>
+</head>
+<body>
+    <img src="{% static 'images/vetements accueil.jpg' %}" class="image"  alt="c">
+    <div class="container">
+        <div class="form"> 
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <a href="{% url 'home' %}"><img  class="image1" src="{% static 'images/log.png' %}" alt="logo"></a>
+            </div>
+            <form action="" method="post">
+                {% csrf_token %}
+                <h1>Connexion</h1>
+                {% if messages %}
+                  {% for message in messages %}
+                  <p style="color: red;">{{message}}!!</p>
+                  {% endfor %}
+                {% endif %}
+                <label for="username">Nom d'utilisateur :</label>
+                <input type="text" name="username" required>
+                <label for="password">Mot de passe :</label>
+                <input type="password" name="password" required>
+                <button type="submit">Se connecter</button>
+            </form>
+            <p style="color: white; margin-bottom: 25px; font-size: 20px;">Pas encore inscrit?? <a href="{% url 'inscription' %}" style="color: #538bac; font-weight: bold;">S'inscrire</a></p>
+        </div>
+    </div>
+</body>
+</html>
