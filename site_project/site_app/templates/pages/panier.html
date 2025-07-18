@@ -2,22 +2,134 @@
 {% load static %}
 {% block content %}
 
-<h1>Bienvenue dans votre panier</h1>
-<h2>Voici les articles que vous souhaitez commander </h2>
-<ul id="liste_des_articles">
+<div class="catalogue_page pannier" style="background-color:rgba(11, 12, 58, 0.137); min-height: 50vh;">
+
+    <h1 class="text_isparition" >Votre panier est vide pour l'instant</h1>
+    <div class="cpannier">
     
-</ul>
+        <h1 style="margin-bottom: -50px; margin-top: 50px; ">votre panier</h1>
+        <div class="catalogue_cantain" style=" margin: 0; padding: 0; width: 100%;">
+            <div class="panier_items">
+                <div class="panier_items_elements">
+                    <div id="liste_des_articles">
+        
+                    </div>
+    
+                    <div class="enregistrer_supprimer_panier">
+                        <button onclick="vider_panier()">Vider le panier</button>
+                    </div> 
+            
+                    <h3 class="valider_commande" >Valider la commande</h2>
+                    <div class="form_panier">
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" id="itemss" name="items" autocomplete="">
+                            <input type="text" placeholder="votre nom" name="nom" id="nom">
+                            <input type="email" placeholder="votre adresse email" name="email" id="email" ><br>
+                            <input type="text" placeholder="adresse" name="Address" id="Address"><br>
+                            <input type="text" placeholder="ville" name="ville" id="ville"><br>
+                            <select name="pays" id="pays">
+                                <option selected>Choisissez un pays</option>
+                                <option>Cameroun</option>
+                                <option>Congo</option>
+                                <option>Ghana</option>
+                                <option>Etats-unis</option>
+                            </select><br>
+                            <label for="total" style="font-weight: bold; color: white; text-shadow: 3px 3px 5px #538bac;"> Somme total a payer </label>
+                            <input type="readonly" id="total" name="total" style="width: 200px; text-align: center; font-weight: bold; font-size: 18px; background-color: #5b8b67; height: 45px; margin-left: 18px; color: white;"><br>
+                            <button type="submit" onclick="commande_panier()">Commander</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
+
     if (localStorage.getItem('panier')==null) {
         var panier = {};
+        var div = document.querySelector('.cpannier').style.display = 'none';
     }else{
         panier = JSON.parse(localStorage.getItem('panier'));
+        var text = document.querySelector(".text_isparition").style.display = 'none';
     }
+    var total = 0, nombre = 0;
+    let itemString = `<div class="panier_commade unn">
+                    <div class="p_i"><strong>Nom</strong></div>
+                    <div class="p_i"><strong>quantité</strong></div>
+                    <div class="p_i"><strong>Prix (Xaf)</strong></div>
+                    <div class="p_i"></div>
+                </div>
+                `;
     for(item in panier){
         let nom = panier[item][1];
         let quantite = panier[item][0];
-        let itemString = `Nom:${nom}, Qte:${quantite}`;
-        let aff = document.querySelector('#liste_des_articles').append(itemString);
+        let prix = panier[item][2];
+        let prix_total = quantite * prix;
+        
+        nombre += quantite;
+        total += prix_total;
+
+    itemString += `
+        <div class="panier_commade deu">
+            <div class="p_i deux">${nom}</div>
+            <div class="p_i deux"><input type="number" min="1" max="15" value="${quantite}" class="quantite_panier" data-id="${item}"  style="text-align: center; width: 100px;  background-color: #538bac93;border-radius: 5px; color:white;"></div>
+            <div class="p_i deux prix_article">${prix_total}</div>
+            <svg onclick="supprimer_element_panier(this)" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3-fill supprimer_article" data-id=${item} viewBox="0 0 16 16" style="color:tomato;">
+                <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0
+                 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
+</svg>
+        </div>
+    `;
+
+
+    }
+    let aff = document.querySelector('#liste_des_articles').innerHTML=itemString;
+
+    itemString += `
+                    <div class="panier_commade troi">
+                        <div class="p_i trois">Qte totale: <span>${nombre}</span></div>
+                        <div class="p_i trois">Prix total(Xaf): <span id="prix_total">${total}</span></div>
+                    </div>`;    
+    let aff1 = document.querySelector('#liste_des_articles').innerHTML=itemString;
+    let somme_total = document.querySelector('#total').value = total;
+        
+    let items = document.querySelector('#itemss');
+    items.value = JSON.stringify(panier);
+    console.log(items.value);
+
+    document.querySelectorAll('.quantite_panier').forEach(input => {
+        input.addEventListener('change', function () {
+        const nom = this.getAttribute('data-id');
+        const nouvelleQte = parseInt(this.value);
+        if (nouvelleQte < 1) return;
+
+        panier[nom][0] = nouvelleQte;
+        localStorage.setItem('panier', JSON.stringify(panier));
+        location.reload(); // Recharge la page pour mettre à jour les totaux
+        });
+    });
+
+
+    document.querySelectorAll('.supprimer_article').forEach(icon => {
+    icon.addEventListener('click', function () {
+        const nom = this.getAttribute('data-id');
+        delete panier[nom];
+        localStorage.setItem('panier', JSON.stringify(panier));
+        location.reload();
+    });
+    });
+
+    function vider_panier(){
+        var val = prompt("Voulez vous vider votre panier?? cliquez sur 1 pour confirmer");
+        if(val == 1){
+            localStorage.clear();
+            location.reload();
+        }
+    }
+    function commande_panier(){
+        localStorage.clear();
     }
 </script>
 {% endblock content %}

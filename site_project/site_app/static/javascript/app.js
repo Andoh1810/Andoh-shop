@@ -1,4 +1,3 @@
-let tabIdPanier=[]
 
 function ouverture(){
     let bouton = document.querySelector(".home_plus");
@@ -24,13 +23,14 @@ function compteur_panier(element){
         //Creons une a l'interieur du dictio
         quantite = panier[item_id][0] +1
         panier[item_id][0] = quantite;
+        panier[item_id][2] += parseFloat(document.getElementById("price"+item_id).innerHTML);
        // panier[item_id] = panier[item_id] +1;
     }
     else{
         quantite = 1;
         nom = document.getElementById("art"+item_id).innerHTML;
-        panier[item_id] = [quantite, nom];
-        
+        prix = parseFloat(document.getElementById("price"+item_id).innerHTML);
+        panier[item_id] = [quantite, nom, prix];
        // panier[item_id] = 1;
     }
     console.log(panier);
@@ -41,10 +41,5 @@ function compteur_panier(element){
     console.log(Object.keys(panier).length);
     
     compteur.innerHTML = Object.keys(panier).length;
+
 }
-
-function AfficherListePanier(panier){
-  
-}
-
-

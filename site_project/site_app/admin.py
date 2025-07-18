@@ -16,3 +16,7 @@ class CategorieAdmin(admin.ModelAdmin):
 class ClassAdmin(admin.ModelAdmin):
     list_display = ('nom',)
     search_fields = ('nom',)
+@admin.register(ValiderCommande)
+class CommandeAdmin(admin.ModelAdmin):
+    list_display = ('nom','email','address','ville','pays','date_de_commande','items','total')
+    search_fields = ('nom','address','ville')

@@ -3,6 +3,7 @@ from .models import *
 from .form import CustomUserCreationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
+import json
 # Create your views here.
 
 
@@ -19,6 +20,12 @@ def contact(request):
 
 def catalogue(request):
     articles = Article.objects.all().order_by('name', '-categorie')
+
+    if request.method == 'GET':
+        name = request.GET.get('rechercher_produitCata')
+        if name is not None:
+            articles = Article.objects.filter(name__icontains = name)
+
     return render(request, 'pages/catalogue.html', {'articles':articles})
 
 def detail(request, id):
@@ -29,6 +36,12 @@ def detail(request, id):
 def categorie(request, id):
     cat = get_object_or_404(Catégorie,id=id)
     articles = Article.objects.filter(categorie=cat)
+
+    if request.method == 'GET':
+        name = request.GET.get('rechercher_produitCate')
+        if name is not None:
+            articles = Article.objects.filter(name__icontains = name)
+
     return render(request, 'pages/categorie.html', {'articles':articles, 'categorie':cat})
 
 def detail_categorie(request, id):
@@ -67,4 +80,38 @@ def accueil(request):
     return render(request, 'pages/accueil.html')
 
 def panier(request):
+    if request.method == 'POST':
+        nom = request.POST.get('nom')
+        email = request.POST.get('email')
+        address = request.POST.get('Address')
+        ville = request.POST.get('ville')
+        pays = request.POST.get('pays')
+        items = request.POST.get('items')
+        total = request.POST.get('total')
+        commande = ValiderCommande(nom=nom, email=email, address=address, ville=ville, pays=pays, items=items, total=total)
+        commande.save()
+
+        # Mise à jour du stock
+        panier = json.loads(items)
+        for item_id, article_data in panier.items():
+            quantite = int(article_data[0])
+            try:
+                article = Article.objects.get(id=int(item_id))
+                if article.quantite_stock >= quantite:
+                    article.quantite_stock -= quantite
+                    article.save()
+                else:
+                    print(f"Stock insuffisant pour l'article {article.name}")
+            except Article.DoesNotExist:
+                print(f"Article ID {item_id} non trouvé")
+
+        return redirect('confirmation')
+
     return render(request, 'pages/panier.html')
+
+def confirmation(request):
+    info = ValiderCommande.objects.all()[:1]
+    for item in info:
+        nom = item.nom
+    
+    return render(request, 'pages/confirmation.html', {'nom':nom})

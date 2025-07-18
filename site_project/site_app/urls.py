@@ -30,4 +30,5 @@ urlpatterns = [
     path('deconnexion', views.deconnexion, name='deconnexion'),
     path('', views.accueil, name='accueil'),
     path('panier/', views.panier, name='panier'),
+    path('confirmation/', views.confirmation, name='confirmation'),
 ]

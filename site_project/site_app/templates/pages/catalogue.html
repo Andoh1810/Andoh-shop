@@ -5,8 +5,20 @@
 {% block aria_catalogue %}aria-current="page"{% endblock aria_catalogue %}
 {% block content %}
 
+
+
 <div class="catalogue_page" style="background-color: rgba(11, 12, 58, 0.137);">
-    <h1>Catalogue de tous nos articles</h1>
+
+    <form class="d-flex" role="search" style="margin-top: 30px; margin-bottom: 70px; display: flex;justify-content: center;align-items: center;">
+        <input class="form-control me-2" type="search" placeholder="Rechercher un article" aria-label="Search" name="rechercher_produitCata" style="width: 50%; height: 50px; background-color: #ffffffa4; color: rgb(0, 0, 0); font-weight: bold;font-size: 21px;" id="btnCata">
+        <button class="btn btn-light" type="submit" style="margin-left: -5px; height: 50px; background-color: rgba(0, 0, 0, 0.712);" id="searchCata"> <svg
+            xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
+            viewBox="0 0 16 16">
+            <path
+            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+        </svg></button>
+    </form>
+
     <div class="catalogue_cantain">
         {% if articles %}
         {% for article in articles %}
@@ -27,8 +39,8 @@
                     <div class="description">{{article.description | truncatechars:15 }}</div>
                        <div class="catalogue_flex">
                            <div class="catalogue_flex1">
-                               <div class="prix">Prix <span>{{article.prix}} XAF</span></div>
-                               <div class="qte_stock">en stock <span class="js_qte">: {{article.quantite_stock}}</span></div>
+                               <div class="prix">Prix <span id="price{{article.id}}">{{article.prix}} </span> XAF</div>
+                               <div class="qte_stock">en stock :<span class="js_qte">{{article.quantite_stock}}</span></div>
                             </div>
                            
                             <div class="catalogue_flex2">
